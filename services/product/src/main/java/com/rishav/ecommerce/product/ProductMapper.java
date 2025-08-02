@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductMapper {
+
     public Product toProduct(ProductRequest request) {
         return Product.builder()
                 .id(request.id())
@@ -13,28 +14,39 @@ public class ProductMapper {
                 .description(request.description())
                 .price(request.price())
                 .availableQuantity(request.availableQuantity())
-                .category(
-                        Category.builder()
-                                .id(request.categoryId())
-                                .build()
-                )
+                .rating(request.rating())
+                .stock(request.stock())
+                .thumbnail(request.thumbnail())
+                .images(request.images())  // JSON as string
+                .brand(request.brand())
+                .category(Category.builder()
+                        .id(request.categoryId())
+                        .build())
                 .build();
     }
 
     public ProductResponse toProductResponse(Product product) {
+        Category category = product.getCategory(); // Lazy-loaded
+
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getAvailableQuantity(),
                 product.getPrice(),
-                product.getCategory().getId(),
-                product.getCategory().getName(),
-                product.getCategory().getDescription()
+                product.getRating(),
+                product.getStock(),
+                product.getThumbnail(),
+                product.getImages(),
+                product.getBrand(),
+                category != null ? category.getId() : null,
+                category != null ? category.getName() : null,
+                category != null ? category.getDescription() : null
         );
     }
 
-    public ProductPurchaseResponse toProductPurchaseResponse(Product product, @NotNull(message = "Quantity is mandatory") double quantity) {
+    public ProductPurchaseResponse toProductPurchaseResponse(Product product,
+                                                             @NotNull(message = "Quantity is mandatory") double quantity) {
         return new ProductPurchaseResponse(
                 product.getId(),
                 product.getName(),

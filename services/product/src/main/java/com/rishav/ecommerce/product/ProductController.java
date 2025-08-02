@@ -11,10 +11,11 @@ import java.util.List;
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
+
     private final ProductService service;
 
     @PostMapping
-    public ResponseEntity<Integer> createProduct(
+    public ResponseEntity<Long> createProduct(
             @RequestBody @Valid ProductRequest request
     ){
         return ResponseEntity.ok(service.createProduct(request));
@@ -22,14 +23,14 @@ public class ProductController {
 
     @PostMapping("/purchase")
     public ResponseEntity<List<ProductPurchaseResponse>> purchaseProducts(
-            @RequestBody List<ProductPurchaseRequest> request
+            @RequestBody @Valid List<ProductPurchaseRequest> request
     ){
         return ResponseEntity.ok(service.purchaseProducts(request));
     }
 
     @GetMapping("/{product-id}")
     public ResponseEntity<ProductResponse> findById(
-            @PathVariable("product-id") Integer productId
+            @PathVariable("product-id") Long productId
     ){
         return ResponseEntity.ok(service.findById(productId));
     }

@@ -16,10 +16,10 @@ public class OrderLineController {
 
     private final OrderLineService service;
 
-    @GetMapping("/order/{order-id}")
+    @GetMapping("/order/{orderId}")
     public ResponseEntity<List<OrderLineResponse>> findByOrderId(
-            @PathVariable("order-id") Integer orderId
-    ){
+            @PathVariable Long orderId
+    ) {
         return ResponseEntity.ok(service.findAllByOrderId(orderId));
     }
 }

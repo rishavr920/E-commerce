@@ -1,7 +1,9 @@
 package com.rishav.ecommerce.orderline;
 
 public record OrderLineResponse(
-        Integer id,
-        double quantity
+        Long id,
+        Long productId,
+        double quantity,
+        Long orderId
 ) {
 }

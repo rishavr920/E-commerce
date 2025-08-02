@@ -23,45 +23,37 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final CustomerClient customerClient;
-
     private final ProductClient productClient;
-
     private final OrderMapper mapper;
-
     private final OrderRepository repository;
-
     private final OrderLineService orderLineService;
-
     private final OrderProducer orderProducer;
-
     private final PaymentClient paymentClient;
 
-    public Integer createOrder(@Valid OrderRequest request) {
-        //check the customer --> will use OpenFeign
+    public Long createOrder(@Valid OrderRequest request) {
+        // 1️⃣ Validate customer
         var customer = this.customerClient.findCustomerById(request.customerId())
                 .orElseThrow(() -> new BusinessException("Cannot create order:: No Customer exists with the provided ID"));
 
-
-        //purchase the products --> product micro-service (RestTemplate)
+        // 2️⃣ Purchase products from Product Service
         var purchasedProducts = this.productClient.purchaseProducts(request.products());
 
-        //persist order
+        // 3️⃣ Save Order
         var order = this.repository.save(mapper.toOrder(request));
 
-        //persist order lines
-
-        for(PurchaseRequest purchaseRequest: request.products()){
+        // 4️⃣ Save Order Lines
+        for (PurchaseRequest productRequest : request.products()) {
             orderLineService.saveOrderLine(
                     new OrderLineRequest(
                             null,
-                            order.getId(),
-                            purchaseRequest.productId(),
-                            purchaseRequest.quantity()
+                            order.getId(), // convert Long → Integer if needed
+                            productRequest.productId(),
+                            productRequest.quantity()
                     )
             );
         }
 
-        //todo start payment process
+        // 5️⃣ Trigger payment
         var paymentRequest = new PaymentRequest(
                 request.amount(),
                 request.paymentMethod(),
@@ -71,7 +63,7 @@ public class OrderService {
         );
         paymentClient.requestOrderPayment(paymentRequest);
 
-        //send the order confirmation --> notification micro-service (kafka)
+        // 6️⃣ Send Kafka confirmation
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
                         request.reference(),
@@ -81,6 +73,7 @@ public class OrderService {
                         purchasedProducts
                 )
         );
+
         return order.getId();
     }
 
@@ -89,12 +82,13 @@ public class OrderService {
                 .stream()
                 .map(mapper::fromOrder)
                 .collect(Collectors.toList());
-
     }
 
-    public OrderResponse findById(Integer orderId) {
+    public OrderResponse findById(Long orderId) {
         return repository.findById(orderId)
                 .map(mapper::fromOrder)
-                .orElseThrow(()-> new EntityNotFoundException(String.format("No order found with the provided ID: %d",orderId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("No order found with the provided ID: %d", orderId)
+                ));
     }
 }

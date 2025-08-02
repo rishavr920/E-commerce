@@ -6,13 +6,14 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.rishav.ecommerce.order.PaymentMethod;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
-
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,21 +22,25 @@ import static jakarta.persistence.EnumType.STRING;
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "customer_order")
-
+@Table(name = "orders") // Matches DB schema
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id; // Use Long to match BIGSERIAL
+
     private String reference;
-    private BigDecimal totalAmount;
+
+    @Column(name = "total_price")
+    private BigDecimal totalAmount; // Matches schema: total_price
 
     @Enumerated(STRING)
     private PaymentMethod paymentMethod;
+
+    @Column(name = "user_id")
     private String customerId;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> orderLines;
 
     @CreatedDate

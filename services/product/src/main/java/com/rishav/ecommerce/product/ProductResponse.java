@@ -3,21 +3,30 @@ package com.rishav.ecommerce.product;
 import java.math.BigDecimal;
 
 public record ProductResponse(
-         Integer id,
+        Long id,
 
-         String name,
+        String name,
 
-         String description,
+        String description,
 
-         double availableQuantity,
+        double availableQuantity,
 
-         BigDecimal price,
+        BigDecimal price,
 
-         Integer categoryId,
+        BigDecimal rating,
 
-         String categoryName,
+        Integer stock,
 
-         String categoryDescription
+        String thumbnail,
 
+        String images, // JSON as string
+
+        String brand,
+
+        Long categoryId,
+
+        String categoryName,
+
+        String categoryDescription
 ) {
 }

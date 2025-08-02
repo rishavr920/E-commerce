@@ -4,12 +4,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OrderMapper {
-    public Order toOrder(OrderRequest request){
+
+    public Order toOrder(OrderRequest request) {
         return Order.builder()
-                .id(request.id())
+                .id(request.id()) // Long type
                 .customerId(request.customerId())
                 .reference(request.reference())
-                .totalAmount(request.amount())
+                .totalAmount(request.amount()) // clearer naming
                 .paymentMethod(request.paymentMethod())
                 .build();
     }
@@ -20,7 +21,9 @@ public class OrderMapper {
                 order.getReference(),
                 order.getTotalAmount(),
                 order.getPaymentMethod(),
-                order.getCustomerId()
+                order.getCustomerId(),
+                order.getCreatedAt(),
+                order.getLastModifiedDate()
         );
     }
 }

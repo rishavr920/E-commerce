@@ -11,13 +11,17 @@ import lombok.*;
 @Setter
 @Entity
 public class OrderLine {
-    @Id
-    @GeneratedValue
-    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // Use Long for consistency
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-    private Integer productId;
+
+    @Column(name = "product_id", nullable = false)
+    private Long productId; // Match Product.id type
+
     private double quantity;
 }

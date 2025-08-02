@@ -1,13 +1,15 @@
 package com.rishav.ecommerce.order;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record OrderResponse(
-        Integer id,
+        Long id,
         String reference,
-        BigDecimal amount,
+        BigDecimal totalAmount,
         PaymentMethod paymentMethod,
-        String customerId
+        String customerId,
+        LocalDateTime createdAt,
+        LocalDateTime lastModifiedDate
 ) {
-
 }

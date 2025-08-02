@@ -6,11 +6,12 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record ProductRequest(
-        Integer id,
-        @NotNull(message = "product name is required")
+        Long id,
+
+        @NotNull(message = "Product name is required")
         String name,
 
-        @NotNull(message = "product description is required")
+        @NotNull(message = "Product description is required")
         String description,
 
         @Positive(message = "Available quantity should be positive")
@@ -19,7 +20,19 @@ public record ProductRequest(
         @Positive(message = "Price should be positive")
         BigDecimal price,
 
-        @NotNull(message = "Price category is required")
-        Integer categoryId
+        @Positive(message = "Rating should be positive")
+        BigDecimal rating,
+
+        @Positive(message = "Stock should be positive")
+        Integer stock,
+
+        String thumbnail,
+
+        String images, // JSON as string
+
+        String brand,
+
+        @NotNull(message = "Product category is required")
+        Long categoryId
 ) {
 }
