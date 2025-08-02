@@ -26,7 +26,7 @@ import static jakarta.persistence.EnumType.STRING;
 public class Order {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String reference;
     private BigDecimal totalAmount;

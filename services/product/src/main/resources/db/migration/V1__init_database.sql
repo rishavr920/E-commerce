@@ -1,28 +1,39 @@
+-- Category table
 CREATE TABLE IF NOT EXISTS category (
-  id INT PRIMARY KEY,
-  name VARCHAR(100),
-  description TEXT
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT
 );
 
+-- Product table
 CREATE TABLE IF NOT EXISTS product (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  description TEXT,
-  available_quantity DOUBLE PRECISION,
-  price NUMERIC(10, 2),
-  rating NUMERIC(2, 1),  -- ✅ THIS MUST EXIST
-  stock INT,
-  thumbnail TEXT,
-  images JSONB,
-  brand VARCHAR(100),
-  category_id INT REFERENCES category(id)
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    available_quantity DOUBLE PRECISION,
+    price NUMERIC(10,2) NOT NULL,
+    rating NUMERIC(2,1),
+    stock INT,
+    thumbnail TEXT,
+    images JSONB,
+    brand VARCHAR(100),
+    category_id BIGINT REFERENCES category(id)
 );
--- Create sequence for category
-CREATE SEQUENCE IF NOT EXISTS category_seq START 1;
 
--- Create sequence for product (if needed)
-CREATE SEQUENCE IF NOT EXISTS product_seq START 1;
+-- Orders table
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    total_price NUMERIC(10,2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-
-CREATE SEQUENCE IF NOT EXISTS category_seq START 1;
-
+-- Order Items table
+CREATE TABLE IF NOT EXISTS order_item (
+    id BIGSERIAL PRIMARY KEY,
+    order_id BIGINT REFERENCES orders(id) ON DELETE CASCADE,
+    product_id BIGINT REFERENCES product(id),
+    quantity INT NOT NULL,
+    price NUMERIC(10,2) NOT NULL
+);
